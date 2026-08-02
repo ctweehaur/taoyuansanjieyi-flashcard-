@@ -170,11 +170,14 @@ function updateNavButtons() {
     const nextBtn = document.getElementById('next-btn');
     const counter = document.getElementById('card-counter');
     
+    // 按钮禁用状态（只有0个词时禁用）
     if (prevBtn) {
         prevBtn.disabled = currentPlan.length === 0;
+        prevBtn.style.opacity = currentPlan.length === 0 ? '0.3' : '1';
     }
     if (nextBtn) {
         nextBtn.disabled = currentPlan.length === 0;
+        nextBtn.style.opacity = currentPlan.length === 0 ? '0.3' : '1';
     }
     if (counter) {
         if (currentPlan.length > 0) {
@@ -228,6 +231,10 @@ function startWeaknessTraining() {
 function updateWeaknessButton(count) {
     const btn = document.querySelector('button[onclick="startWeaknessTraining()"]');
     if (btn) btn.innerHTML = `🎯 开启错题专项训练 (<span class="text-amber-600 font-bold">${count}</span>)`;
+    
+    // 同时更新单独显示的计数
+    const countEl = document.getElementById('wrong-count');
+    if (countEl) countEl.innerText = count;
 }
 
 function showEmptyState() {
@@ -357,6 +364,7 @@ function renderQuizQuestion() {
     const optionsContainer = document.getElementById('quiz-options');
 
     if (currentQ.qType === 0) {
+        // 看词猜意
         questionWordEl.innerHTML = `<span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-2 font-sans font-medium">看词猜意</span><br>${currentQ.word}`;
         
         optionsContainer.innerHTML = options.map(opt => {
@@ -369,6 +377,7 @@ function renderQuizQuestion() {
         }).join('');
 
     } else if (currentQ.qType === 1) {
+        // 根据释义选词
         questionWordEl.innerHTML = `<span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-sans font-medium block w-max mx-auto mb-2">根据释义选生词</span><p class="text-base font-medium font-sans px-4 text-stone-700 leading-relaxed text-left">${currentQ.defZh}</p>`;
         
         optionsContainer.innerHTML = options.map(opt => {
@@ -381,6 +390,7 @@ function renderQuizQuestion() {
         }).join('');
 
     } else if (currentQ.qType === 2) {
+        // 语境填空
         let exampleText = currentQ.example || '暂无例句。';
         if (currentQ.word && exampleText.includes(currentQ.word)) {
             exampleText = exampleText.replace(currentQ.word, ` ______ `);
